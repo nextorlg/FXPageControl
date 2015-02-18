@@ -77,6 +77,7 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
 	_dotSize = 6.0f;
     _dotShadowOffset = CGSizeMake(0, 1);
     _selectedDotShadowOffset = CGSizeMake(0, 1);
+    _numberOfVisiblePages = 1;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -103,9 +104,9 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
     if (_selectedDotShape > LAST_SHAPE) CGPathRelease(_selectedDotShape);
 }
 
-- (CGSize)sizeForNumberOfPages:(__unused NSInteger)pageCount
+- (CGSize)sizeForNumberOfPages:(NSInteger)pageCount
 {
-    CGFloat width = _dotSize + (_dotSize + _dotSpacing) * (_numberOfPages - 1);
+    CGFloat width = _dotSize + (_dotSize + _dotSpacing) * (pageCount - 1);
     return _vertical? CGSizeMake(_dotSize, width): CGSizeMake(width, _dotSize);
 }
 
@@ -119,7 +120,18 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
 	if (_numberOfPages > 1 || !_hidesForSinglePage)
 	{
         CGContextRef context = UIGraphicsGetCurrentContext();
-        CGSize size = [self sizeForNumberOfPages:_numberOfPages];
+        
+        NSInteger pageControlPage = 0;
+        NSInteger initialPageIndicator = 0;
+        NSInteger numberOfIndicatorsForPage = _numberOfPages;
+        
+        if (_numberOfVisiblePages < _numberOfPages) {
+            pageControlPage = _currentPage/_numberOfVisiblePages;
+            numberOfIndicatorsForPage = MIN(_numberOfVisiblePages, _numberOfPages - (_numberOfVisiblePages*pageControlPage));
+            initialPageIndicator = (pageControlPage*_numberOfVisiblePages);
+        }
+        
+        CGSize size = [self sizeForNumberOfPages:numberOfIndicatorsForPage];
         if (_vertical)
         {
             CGContextTranslateCTM(context, self.frame.size.width / 2, (self.frame.size.height - size.height) / 2);
@@ -129,7 +141,7 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
             CGContextTranslateCTM(context, (self.frame.size.width - size.width) / 2, self.frame.size.height / 2);
         }
         
-        for (int i = 0; i < _numberOfPages; i++)
+        for (NSInteger i = initialPageIndicator; i < initialPageIndicator+numberOfIndicatorsForPage; i++)
 		{
 			UIImage *dotImage = nil;
             UIColor *dotColor = nil;
@@ -169,7 +181,7 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
 			}
             
             CGContextSaveGState(context);
-            CGFloat offset = (_dotSize + _dotSpacing) * i + _dotSize / 2;
+            CGFloat offset = (_dotSize + _dotSpacing) * (i - initialPageIndicator) + _dotSize / 2;
             CGContextTranslateCTM(context, _vertical? 0: offset, _vertical? offset: 0);
             
             if (dotShadowColor && ![dotShadowColor isEqual:[UIColor clearColor]])
@@ -392,6 +404,18 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
         {
             _currentPage = pages - 1;
         }
+        if (_numberOfVisiblePages < 0) {
+            _numberOfVisiblePages = pages;
+        }
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setNumberOfVisiblePages:(NSInteger)pages
+{
+    if (_numberOfVisiblePages != pages)
+    {
+        _numberOfVisiblePages = pages;
         [self setNeedsDisplay];
     }
 }
@@ -411,7 +435,7 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
 
 - (CGSize)sizeThatFits:(__unused CGSize)size
 {
-    CGSize dotSize = [self sizeForNumberOfPages:_numberOfPages];
+    CGSize dotSize = [self sizeForNumberOfPages:_numberOfVisiblePages];
     if (_selectedDotSize)
     {
         CGFloat width = (_selectedDotSize - _dotSize);

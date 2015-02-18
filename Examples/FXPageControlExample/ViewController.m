@@ -37,6 +37,7 @@
     self.pageControl2.selectedDotSize = 10.0;
     self.pageControl2.dotColor = [UIColor blueColor];
     self.pageControl2.dotSpacing = 30.0;
+    self.pageControl2.numberOfVisiblePages = 2;
     self.pageControl2.wrapEnabled = YES;
 }
 

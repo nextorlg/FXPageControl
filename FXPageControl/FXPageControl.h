@@ -54,7 +54,7 @@ extern const CGPathRef FXPageControlDotShapeEmptyCircle;
 @protocol FXPageControlDelegate;
 
 
-IB_DESIGNABLE @interface FXPageControl : UIControl
+@interface FXPageControl : UIControl
 
 - (void)setUp;
 - (CGSize)sizeForNumberOfPages:(NSInteger)pageCount;
@@ -64,6 +64,7 @@ IB_DESIGNABLE @interface FXPageControl : UIControl
 
 @property (nonatomic, assign) IBInspectable NSInteger currentPage;
 @property (nonatomic, assign) IBInspectable NSInteger numberOfPages;
+@property (nonatomic, assign) IBInspectable NSInteger numberOfVisiblePages;
 @property (nonatomic, assign) IBInspectable BOOL defersCurrentPageDisplay;
 @property (nonatomic, assign) IBInspectable BOOL hidesForSinglePage;
 @property (nonatomic, assign, getter = isWrapEnabled) IBInspectable BOOL wrapEnabled;
