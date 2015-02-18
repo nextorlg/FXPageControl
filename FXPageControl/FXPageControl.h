@@ -48,6 +48,7 @@
 extern const CGPathRef FXPageControlDotShapeCircle;
 extern const CGPathRef FXPageControlDotShapeSquare;
 extern const CGPathRef FXPageControlDotShapeTriangle;
+extern const CGPathRef FXPageControlDotShapeEmptyCircle;
 
 
 @protocol FXPageControlDelegate;

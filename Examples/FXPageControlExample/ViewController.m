@@ -33,7 +33,7 @@
     self.pageControl2.numberOfPages = (NSInteger)(self.contentView2.bounds.size.width / self.scrollView2.bounds.size.width);
     self.pageControl2.defersCurrentPageDisplay = YES;
     self.pageControl2.selectedDotColor = [UIColor redColor];
-    self.pageControl2.selectedDotShape = FXPageControlDotShapeSquare;
+    self.pageControl2.selectedDotShape = FXPageControlDotShapeEmptyCircle;
     self.pageControl2.selectedDotSize = 10.0;
     self.pageControl2.dotColor = [UIColor blueColor];
     self.pageControl2.dotSpacing = 30.0;

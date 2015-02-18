@@ -48,7 +48,8 @@
 const CGPathRef FXPageControlDotShapeCircle = (const CGPathRef)1;
 const CGPathRef FXPageControlDotShapeSquare = (const CGPathRef)2;
 const CGPathRef FXPageControlDotShapeTriangle = (const CGPathRef)3;
-#define LAST_SHAPE FXPageControlDotShapeTriangle
+const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
+#define LAST_SHAPE FXPageControlDotShapeEmptyCircle
 
 
 @implementation NSObject (FXPageControl)
@@ -181,7 +182,7 @@ const CGPathRef FXPageControlDotShapeTriangle = (const CGPathRef)3;
 			}
 			else
 			{
-                [dotColor setFill];
+                [dotColor set];
                 if (!dotShape || dotShape == FXPageControlDotShapeCircle)
                 {
                     CGContextFillEllipseInRect(context, CGRectMake(-dotSize / 2, -dotSize / 2, dotSize, dotSize));
@@ -198,6 +199,11 @@ const CGPathRef FXPageControlDotShapeTriangle = (const CGPathRef)3;
                     CGContextAddLineToPoint(context, -dotSize / 2, dotSize / 2);
                     CGContextAddLineToPoint(context, 0, -dotSize / 2);
                     CGContextFillPath(context);
+                }
+                else if (dotShape == FXPageControlDotShapeEmptyCircle) {
+                    CGContextBeginPath(context);
+                    CGContextAddEllipseInRect(context, CGRectMake(-dotSize / 2, -dotSize / 2, dotSize, dotSize));
+                    CGContextStrokePath(context);
                 }
                 else
                 {
