@@ -68,15 +68,16 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
 @implementation FXPageControl
 
 - (void)setUp
-{	
+{
     //needs redrawing if bounds change
     self.contentMode = UIViewContentModeRedraw;
-    
+
 	//set defaults
 	_dotSpacing = 10.0f;
 	_dotSize = 6.0f;
     _dotShadowOffset = CGSizeMake(0, 1);
     _selectedDotShadowOffset = CGSizeMake(0, 1);
+    _selectedDotLineWidth = 1.0f;
     _numberOfVisiblePages = 1;
 }
 
@@ -120,17 +121,17 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
 	if (_numberOfPages > 1 || !_hidesForSinglePage)
 	{
         CGContextRef context = UIGraphicsGetCurrentContext();
-        
+
         NSInteger pageControlPage = 0;
         NSInteger initialPageIndicator = 0;
         NSInteger numberOfIndicatorsForPage = _numberOfPages;
-        
+
         if (_numberOfVisiblePages < _numberOfPages) {
             pageControlPage = _currentPage/_numberOfVisiblePages;
             numberOfIndicatorsForPage = MIN(_numberOfVisiblePages, _numberOfPages - (_numberOfVisiblePages*pageControlPage));
             initialPageIndicator = (pageControlPage*_numberOfVisiblePages);
         }
-        
+
         CGSize size = [self sizeForNumberOfPages:numberOfIndicatorsForPage];
         if (_vertical)
         {
@@ -140,7 +141,7 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
         {
             CGContextTranslateCTM(context, (self.frame.size.width - size.width) / 2, self.frame.size.height / 2);
         }
-        
+
         for (NSInteger i = initialPageIndicator; i < initialPageIndicator+numberOfIndicatorsForPage; i++)
 		{
 			UIImage *dotImage = nil;
@@ -150,7 +151,8 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
             UIColor *dotShadowColor = nil;
             CGSize dotShadowOffset = CGSizeZero;
             CGFloat dotShadowBlur = 0;
-            
+            CGFloat dotLineWidth = 1.0f;
+
 			if (i == _currentPage)
 			{
 				[_selectedDotColor setFill];
@@ -161,6 +163,7 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
                 dotShadowColor = _selectedDotShadowColor;
                 dotShadowOffset = _selectedDotShadowOffset;
                 dotSize = _selectedDotSize ?: _dotSize;
+                dotLineWidth = _selectedDotLineWidth;
 			}
 			else
 			{
@@ -179,11 +182,11 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
                 dotShadowOffset = _dotShadowOffset;
                 dotSize = _dotSize;
 			}
-            
+
             CGContextSaveGState(context);
             CGFloat offset = (_dotSize + _dotSpacing) * (i - initialPageIndicator) + _dotSize / 2;
             CGContextTranslateCTM(context, _vertical? 0: offset, _vertical? offset: 0);
-            
+
             if (dotShadowColor && ![dotShadowColor isEqual:[UIColor clearColor]])
             {
                 CGContextSetShadowWithColor(context, dotShadowOffset, dotShadowBlur, dotShadowColor.CGColor);
@@ -214,6 +217,7 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
                 }
                 else if (dotShape == FXPageControlDotShapeEmptyCircle) {
                     CGContextBeginPath(context);
+                    CGContextSetLineWidth(context, dotLineWidth);
                     CGContextAddEllipseInRect(context, CGRectMake(-dotSize / 2, -dotSize / 2, dotSize, dotSize));
                     CGContextStrokePath(context);
                 }
@@ -369,6 +373,15 @@ const CGPathRef FXPageControlDotShapeEmptyCircle = (const CGPathRef)4;
 		_selectedDotShadowOffset = dotShadowOffset;
 		[self setNeedsDisplay];
 	}
+}
+
+- (void)setSelectedDotLineWidth:(CGFloat)selectedDotLineWidth
+{
+    if (_selectedDotLineWidth != selectedDotLineWidth)
+    {
+        _selectedDotLineWidth = selectedDotLineWidth;
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setDotSpacing:(CGFloat)dotSpacing

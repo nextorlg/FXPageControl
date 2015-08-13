@@ -85,6 +85,7 @@ extern const CGPathRef FXPageControlDotShapeEmptyCircle;
 @property (nonatomic, strong) IBInspectable UIColor *selectedDotShadowColor;
 @property (nonatomic, assign) IBInspectable CGFloat selectedDotShadowBlur;
 @property (nonatomic, assign) IBInspectable CGSize selectedDotShadowOffset;
+@property (nonatomic, assign) IBInspectable CGFloat selectedDotLineWidth;
 
 @property (nonatomic, assign) IBInspectable CGFloat dotSpacing;
 
